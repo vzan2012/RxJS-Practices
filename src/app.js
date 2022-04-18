@@ -1,5 +1,7 @@
 import {
+  count,
   debounceTime,
+  distinct,
   elementAt,
   filter,
   first,
@@ -8,9 +10,12 @@ import {
   interval,
   last,
   map,
+  max,
+  min,
   Observable,
   of,
   scan,
+  skip,
   take,
   takeLast,
   takeWhile,
@@ -132,6 +137,31 @@ import {
 //   .subscribe((data) => console.log(data));
 
 /* Filter Operator */
-from([10, 20, 30, 40])
-  .pipe(filter((data) => (data / 30 === 1 ? true : false)))
+// from([10, 20, 30, 40])
+//   .pipe(filter((data) => (data / 30 === 1 ? true : false)))
+//   .subscribe((data) => console.log(data));
+
+/* Distinct Operator */
+// from([10, 10, 20, 20, 30, 40, 30, 50, 60, 70, 30, 10, 20, 80, 90])
+//   .pipe(distinct())
+//   .subscribe((data) => console.log(data));
+
+/* Skip Operator */
+// from([10, 20, 30, 40])
+//   .pipe(skip(3))
+//   .subscribe((data) => console.log(data));
+
+/* Count Operator */
+// from([10, 20, 30, 40])
+//   .pipe(count())
+//   .subscribe((data) => console.log(data));
+
+/* Max Operator */
+from([10, 20, 30, 40, 100])
+  .pipe(max())
+  .subscribe((data) => console.log(data));
+
+/* Min Operator */
+from([10, 20, 30, 40, 100])
+  .pipe(min())
   .subscribe((data) => console.log(data));
