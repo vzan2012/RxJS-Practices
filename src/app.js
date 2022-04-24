@@ -1,24 +1,29 @@
 import {
   count,
   debounceTime,
+  delay,
   distinct,
   elementAt,
   filter,
   first,
   from,
   fromEvent,
+  switchMap,
   interval,
   last,
   map,
   max,
+  mergeMap,
   min,
   Observable,
   of,
+  pluck,
   scan,
   skip,
   take,
   takeLast,
   takeWhile,
+  tap,
   throttleTime,
 } from "rxjs";
 
@@ -165,3 +170,51 @@ from([10, 20, 30, 40, 100])
 from([10, 20, 30, 40, 100])
   .pipe(min())
   .subscribe((data) => console.log(data));
+
+/* Pluck Operator */
+const testObj = [
+  {
+    name: "ABC",
+    country: "IN",
+  },
+  {
+    name: "DEF",
+    country: "FR",
+  },
+  {
+    name: "XYZ",
+    country: "US",
+  },
+];
+from(testObj)
+  .pipe(
+    pluck("name"),
+    tap((data) => console.log(data))
+  )
+  .subscribe();
+
+/*  mergeMap Operator */
+// const savePosition = (position) => {
+//   return of(position).pipe();
+// };
+
+// fromEvent(document, "click")
+//   .pipe(
+//     mergeMap((data) =>
+//       savePosition({
+//         x: data.clientX,
+//         y: data.clientY,
+//         time: new Date(),
+//       })
+//     )
+//   )
+//   .subscribe((data) => console.log(data));
+
+/* switchMap Operator */
+const clickBtn = document.querySelector("#click");
+const obs1$ = fromEvent(clickBtn, "click");
+const obs2$ = interval(1000);
+
+/* Doesn't cancel the previous emit values (starts with another new emit values along with the old emited values) */
+// obs1$.subscribe((data) => obs2$.subscribe((data) => console.log(data)));
+obs1$.pipe(switchMap((data) => obs2$)).subscribe((data) => console.log(data));
