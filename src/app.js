@@ -25,6 +25,11 @@ import {
   takeWhile,
   tap,
   throttleTime,
+  combineLatestAll,
+  combineLatest,
+  catchError,
+  combineLatestWith,
+  flatMap,
 } from "rxjs";
 
 /* Click Event */
@@ -162,36 +167,36 @@ import {
 //   .subscribe((data) => console.log(data));
 
 /* Max Operator */
-from([10, 20, 30, 40, 100])
-  .pipe(max())
-  .subscribe((data) => console.log(data));
+// from([10, 20, 30, 40, 100])
+//   .pipe(max())
+//   .subscribe((data) => console.log(data));
 
 /* Min Operator */
-from([10, 20, 30, 40, 100])
-  .pipe(min())
-  .subscribe((data) => console.log(data));
+// from([10, 20, 30, 40, 100])
+//   .pipe(min())
+//   .subscribe((data) => console.log(data));
 
 /* Pluck Operator */
-const testObj = [
-  {
-    name: "ABC",
-    country: "IN",
-  },
-  {
-    name: "DEF",
-    country: "FR",
-  },
-  {
-    name: "XYZ",
-    country: "US",
-  },
-];
-from(testObj)
-  .pipe(
-    pluck("name"),
-    tap((data) => console.log(data))
-  )
-  .subscribe();
+// const testObj = [
+//   {
+//     name: "ABC",
+//     country: "IN",
+//   },
+//   {
+//     name: "DEF",
+//     country: "FR",
+//   },
+//   {
+//     name: "XYZ",
+//     country: "US",
+//   },
+// ];
+// from(testObj)
+//   .pipe(
+//     pluck("name"),
+//     tap((data) => console.log(data))
+//   )
+//   .subscribe();
 
 /*  mergeMap Operator */
 // const savePosition = (position) => {
@@ -211,10 +216,96 @@ from(testObj)
 //   .subscribe((data) => console.log(data));
 
 /* switchMap Operator */
-const clickBtn = document.querySelector("#click");
-const obs1$ = fromEvent(clickBtn, "click");
-const obs2$ = interval(1000);
+// const clickBtn = document.querySelector("#click");
+// const obs1$ = fromEvent(clickBtn, "click");
+// const obs2$ = interval(1000);
 
 /* Doesn't cancel the previous emit values (starts with another new emit values along with the old emited values) */
 // obs1$.subscribe((data) => obs2$.subscribe((data) => console.log(data)));
-obs1$.pipe(switchMap((data) => obs2$)).subscribe((data) => console.log(data));
+// obs1$.pipe(switchMap((data) => obs2$)).subscribe((data) => console.log(data));
+
+// Practical Example
+const authors = [
+  {
+    id: 1,
+    name: "ABC",
+    country: "US",
+  },
+  {
+    id: 2,
+    name: "DEF",
+    country: "IN",
+  },
+  {
+    id: 3,
+    name: "XYZ",
+    country: "FR",
+  },
+];
+
+const books = [
+  {
+    id: 1,
+    bookName: "League of Titania",
+    genre: "Mystery",
+    authorId: 3,
+  },
+  {
+    id: 2,
+    bookName: "The Crystal in the Sky",
+    genre: "Mystery",
+    authorId: 3,
+  },
+  {
+    id: 3,
+    bookName: "The Exiled Sky",
+    genre: "Mystery",
+    authorId: 3,
+  },
+  {
+    id: 4,
+    bookName: "Defend the Storm",
+    genre: "Crime",
+    authorId: 1,
+  },
+  {
+    id: 5,
+    bookName: "Snows of Arrakis",
+    genre: "Sci-fi",
+    authorId: 1,
+  },
+  {
+    id: 6,
+    bookName: "Legacy Rising",
+    genre: "Sci-fi",
+    authorId: 1,
+  },
+  {
+    id: 7,
+    bookName: "The Demon in the City",
+    genre: "Crime",
+    authorId: 2,
+  },
+];
+
+const authors$ = of(authors);
+const books$ = of(books);
+
+authors$
+  .pipe(
+    combineLatestWith(books$),
+    map(([authors, books]) => {
+      return {
+        ...authors.map((data) => {
+          return {
+            authorId: data.id,
+            authorName: data.name,
+            authorCountry: data.country,
+            authorbooks: books.filter((book) => book.authorId === data.id),
+          };
+        }),
+      };
+    }),
+    catchError((e) => console.log(e))
+  )
+  .subscribe((data) => console.log(data));
